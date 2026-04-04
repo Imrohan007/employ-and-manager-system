@@ -9,19 +9,22 @@ const AuthProvider = ({ children }) => {
     const [userData, setUserData] = useState(null)
 
     useEffect(() => {
-        setLocalStorage()
-        const {employees} = getLocalStorage()
-        setUserData(employees)
+        try {
+            setLocalStorage()
+            const {employees} = getLocalStorage()
+            setUserData(employees)
+        } catch (error) {
+            console.error('Error initializing auth data:', error)
+            setUserData([])
+        }
     }, [])
     
     
 
     return (
-        <div>
-            <AuthContext.Provider value={[userData,setUserData]}>
-                {children}
-            </AuthContext.Provider>
-        </div>
+        <AuthContext.Provider value={[userData,setUserData]}>
+            {children}
+        </AuthContext.Provider>
     )
 }
 
