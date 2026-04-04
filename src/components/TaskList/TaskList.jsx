@@ -4,7 +4,7 @@ import NewTask from './NewTask'
 import CompleteTask from './CompleteTask'
 import FailedTask from './FailedTask'
 
-const TaskList = ({ data }) => {
+const TaskList = ({ data, onDataUpdate }) => {
     const [tasks, setTasks] = useState(data.tasks)
 
     const handleAcceptTask = (taskIndex) => {
@@ -16,13 +16,13 @@ const TaskList = ({ data }) => {
         }
         setTasks(updatedTasks)
         
-        // Update localStorage
+        // Update task counts
         const updatedData = { ...data, tasks: updatedTasks }
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
-        if (loggedInUser) {
-            loggedInUser.data = updatedData
-            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser))
-        }
+        updatedData.taskCounts.newTask = Math.max(0, updatedData.taskCounts.newTask - 1)
+        updatedData.taskCounts.active = updatedData.taskCounts.active + 1
+        
+        // Notify parent component
+        onDataUpdate(updatedData)
     }
 
     const handleCompleteTask = (taskIndex) => {
@@ -39,12 +39,8 @@ const TaskList = ({ data }) => {
         updatedData.taskCounts.active = Math.max(0, updatedData.taskCounts.active - 1)
         updatedData.taskCounts.completed = updatedData.taskCounts.completed + 1
         
-        // Update localStorage
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
-        if (loggedInUser) {
-            loggedInUser.data = updatedData
-            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser))
-        }
+        // Notify parent component
+        onDataUpdate(updatedData)
     }
 
     const handleFailTask = (taskIndex) => {
@@ -61,12 +57,8 @@ const TaskList = ({ data }) => {
         updatedData.taskCounts.active = Math.max(0, updatedData.taskCounts.active - 1)
         updatedData.taskCounts.failed = updatedData.taskCounts.failed + 1
         
-        // Update localStorage
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'))
-        if (loggedInUser) {
-            loggedInUser.data = updatedData
-            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser))
-        }
+        // Notify parent component
+        onDataUpdate(updatedData)
     }
 
     return (
